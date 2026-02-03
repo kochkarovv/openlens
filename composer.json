@@ -1,14 +1,14 @@
 {
-  "name": "kochkarovv/elasticlens-opensearch",
+  "name": "kochkarovv/openlens",
   "description": "Search your Laravel models with the convenience of Eloquent and the power of OpenSearch",
   "keywords": [
     "PDPhilip",
     "laravel",
     "OpenSearch",
     "Eloquent",
-    "elasticlens"
+    "openlens"
   ],
-  "homepage": "https://github.com/pdphilip/elasticlens",
+  "homepage": "https://github.com/kochkarovv/openlens",
   "license": "MIT",
   "authors": [
     {
