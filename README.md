@@ -33,7 +33,7 @@ Yes, but mostly no.
 
 **ElasticLens is built from the ground up around Elasticsearch**.
 
-It integrates directly with the  [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) package (Elasticsearch using Eloquent), creating a dedicated `Index-Model` that is fully accessible and automatically synced with
+It integrates directly with the  [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) package (OpenSearch using Eloquent), creating a dedicated `Index-Model` that is fully accessible and automatically synced with
 your `Base-Model`.
 
 <details>
@@ -43,7 +43,7 @@ your `Base-Model`.
 > The `Index-Model` acts as a separate Elasticsearch model managed by ElasticLens, yet you retain full control over it, just like any other Laravel model. In addition to working directly with the `Index-Model`, ElasticLens offers tools for
 > mapping fields (with embedding relationships) during the build process, and managing index migrations.
 
-> For Example, a base `User` Model will sync with an Elasticsearch `IndexedUser` Model that provides all the features from [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) to search your `Base-Model`.
+> For Example, a base `User` Model will sync with an OpenSearch `IndexedUser` Model that provides all the features from [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) to search your `Base-Model`.
 
 </details>
 
@@ -52,15 +52,15 @@ your `Base-Model`.
 # Requirements
 
 - Laravel 10.x/11.x/12.x
-- Elasticsearch 8.x
+- OpenSearch 2.x/3.x
 
 
 # Installation
 
 <details>
-<summary>NB: Before you start, set the Laravel-Elasticsearch DB Config (click to expand)</summary>
-
-> See [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) for more details    
+<summary>NB: Before you start, set the Laravel-OpenSearch DB Config (click to expand)</summary>
+    
+> See [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) for more details    
 >    
 > Update `.env`
 
@@ -93,10 +93,10 @@ ES_OPT_DEFAULT_LIMIT=1000
 > Update `config/database.php`
 
  ```php
-'elasticsearch' => [
-    'driver' => 'elasticsearch',
-    'auth_type' => env('ES_AUTH_TYPE', 'http'), //http or cloud
-    'hosts' => explode(',', env('ES_HOSTS', 'http://localhost:9200')),
+'opensearch' => [
+    'driver' => 'opensearch',
+    'auth_type' => env('OS_AUTH_TYPE', 'http'), //http or cloud
+    'hosts' => explode(',', env('OS_HOSTS', 'http://localhost:9200')),
     'username' => env('ES_USERNAME', ''),
     'password' => env('ES_PASSWORD', ''),
     'cloud_id' => env('ES_CLOUD_ID', ''),
@@ -126,7 +126,7 @@ ES_OPT_DEFAULT_LIMIT=1000
 Install the package via composer:
 
 ```bash
-composer require pdphilip/elasticlens
+composer require kochkarovv/elasticlens-opensearch
 ```
 Publish the config file:
 ```bash
@@ -653,7 +653,7 @@ Elasticsearch automatically indexes new fields it encounters, but it might not a
 Since the `Index-Model` utilises the [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) package, you can use `IndexBlueprint` to customise your `migrationMap()`
 
 ```php
-use PDPhilip\Elasticsearch\Schema\Blueprint;
+use PDPhilip\OpenSearch\Schema\Blueprint;
 
 class IndexedUser extends IndexModel
 {

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'database' => 'elasticsearch',
+    'database' => 'opensearch',
 
     'queue' => null, // Set queue to use for dispatching index builds, ex: default, high, low, etc.
 

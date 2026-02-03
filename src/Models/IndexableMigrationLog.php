@@ -7,8 +7,8 @@ namespace PDPhilip\ElasticLens\Models;
 use Exception;
 use Illuminate\Support\Carbon;
 use PDPhilip\ElasticLens\Enums\IndexableMigrationLogState;
-use PDPhilip\Elasticsearch\Eloquent\Model;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Eloquent\Model;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 /**
  * App\Models\IndexableLog
@@ -30,7 +30,7 @@ use PDPhilip\Elasticsearch\Schema\Schema;
  */
 class IndexableMigrationLog extends Model
 {
-    public $connection = 'elasticsearch';
+    public $connection = 'opensearch';
 
     const UPDATED_AT = null;
 
@@ -111,7 +111,7 @@ class IndexableMigrationLog extends Model
 
     public static function connectionName(): string
     {
-        return config('elasticlens.database', 'elasticsearch');
+        return config('elasticlens.database', 'opensearch');
     }
 
     public static function checkHasIndex(): bool

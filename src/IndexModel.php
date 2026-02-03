@@ -14,8 +14,8 @@ use PDPhilip\ElasticLens\Models\IndexableMigrationLog;
 use PDPhilip\ElasticLens\Traits\IndexBaseModel;
 use PDPhilip\ElasticLens\Traits\IndexFieldMap;
 use PDPhilip\ElasticLens\Traits\IndexMigrationMap;
-use PDPhilip\Elasticsearch\Eloquent\Builder;
-use PDPhilip\Elasticsearch\Eloquent\Model;
+use PDPhilip\OpenSearch\Eloquent\Builder;
+use PDPhilip\OpenSearch\Eloquent\Model;
 
 /**
  * @property string $id
@@ -33,7 +33,7 @@ abstract class IndexModel extends Model
     use IndexBaseModel, IndexFieldMap, IndexMigrationMap;
 
     // @var string
-    public $connection = 'elasticsearch';
+    public $connection = 'opensearch';
 
     // @var bool
     protected $observeBase = true;
@@ -47,7 +47,7 @@ abstract class IndexModel extends Model
         if (! $this->baseModel) {
             $this->baseModel = $this->guessBaseModelName();
         }
-        $this->setConnection(config('elasticlens.database') ?? 'elasticsearch');
+        $this->setConnection(config('elasticlens.database') ?? 'opensearch');
         Builder::macro('paginateBase', function ($perPage = 15, $pageName = 'page', $page = null, $options = []) {
             $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
             $path = LengthAwarePaginator::resolveCurrentPath();

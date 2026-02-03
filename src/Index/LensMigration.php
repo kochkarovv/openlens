@@ -9,8 +9,8 @@ use PDPhilip\ElasticLens\Enums\IndexableMigrationLogState;
 use PDPhilip\ElasticLens\Models\IndexableBuild;
 use PDPhilip\ElasticLens\Models\IndexableMigrationLog;
 use PDPhilip\ElasticLens\Traits\Timer;
-use PDPhilip\Elasticsearch\Schema\Blueprint;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Blueprint;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 class LensMigration extends LensIndex
 {

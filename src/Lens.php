@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PDPhilip\ElasticLens;
 
-use PDPhilip\Elasticsearch\Eloquent\Model;
+use PDPhilip\OpenSearch\Eloquent\Model;
 
 class Lens
 {

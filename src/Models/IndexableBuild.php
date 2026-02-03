@@ -7,9 +7,9 @@ namespace PDPhilip\ElasticLens\Models;
 use Illuminate\Support\Carbon;
 use PDPhilip\ElasticLens\Enums\IndexableBuildState;
 use PDPhilip\ElasticLens\Index\BuildResult;
-use PDPhilip\Elasticsearch\Eloquent\Builder;
-use PDPhilip\Elasticsearch\Eloquent\Model;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Eloquent\Builder;
+use PDPhilip\OpenSearch\Eloquent\Model;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 /**
  * App\Models\IndexableLog
@@ -35,7 +35,7 @@ use PDPhilip\Elasticsearch\Schema\Schema;
  */
 class IndexableBuild extends Model
 {
-    public $connection = 'elasticsearch';
+    public $connection = 'opensearch';
 
     protected $appends = [
         'state_name',
@@ -190,7 +190,7 @@ class IndexableBuild extends Model
 
     public static function connectionName(): string
     {
-        return config('elasticlens.database', 'elasticsearch');
+        return config('elasticlens.database', 'opensearch');
     }
 
     public static function checkHasIndex(): bool

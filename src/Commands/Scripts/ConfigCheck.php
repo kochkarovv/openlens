@@ -6,7 +6,7 @@ namespace PDPhilip\ElasticLens\Commands\Scripts;
 
 use Exception;
 use PDPhilip\ElasticLens\Models\IndexableBuild;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 final class ConfigCheck
 {
@@ -66,7 +66,7 @@ final class ConfigCheck
         if (! $connection) {
             $output['connection']['status'] = 'error';
             $output['connection']['help'] = [
-                "Connection empty in elasticlens.php config. Set 'database' => 'elasticsearch' in config file",
+                "Connection empty in elasticlens.php config. Set 'database' => 'opensearch' in config file",
             ];
 
             return false;

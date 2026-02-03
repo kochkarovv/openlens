@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PDPhilip\ElasticLens\Utils;
 
 use PDPhilip\ElasticLens\Index\LensIndex;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 class IndexHelper extends LensIndex
 {

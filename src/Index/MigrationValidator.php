@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PDPhilip\ElasticLens\Index;
 
 use Exception;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 final class MigrationValidator
 {
