@@ -2,16 +2,6 @@
 
 All notable changes to `elasticlens` will be documented in this file.
 
-## v3.1.2 - 2025-09-12
-
-This release is compatible with Laravel 10, 11 & 12
-
-### What's Changed
-
-* Bug fix: Fixed typo in `removeIndex()` method and ensure bool is returned
-
-**Full Changelog**: https://github.com/pdphilip/elasticlens/compare/v3.1.2...v3.1.2
-
 ## v3.1.1 - 2025-09-03
 
 This release is compatible with Laravel 10, 11 & 12
@@ -22,7 +12,6 @@ This release is compatible with Laravel 10, 11 & 12
 
 ```php
 $buildErrors = IndexableBuild::buildErrorsQuery(IndexedUser::class)->get();
-
 
 ```
 - Bug fix: ensure array for internal state_data on IndexableBuild
@@ -41,7 +30,6 @@ This release is compatible with Laravel 10, 11 & 12
 class IndexedUser extends IndexModel
 {
     protected int $buildChunkRate = 2000;
-
 
 
 ```
@@ -106,7 +94,7 @@ This release is compatible with Laravel 10, 11 & 12
 This is an updated dependency release compatible with:
 
 - Laravel 10/11/12
-- `laravel-elasticsearch` package v5
+- `laravel-opensearch` package v5
 
 ### What's Changed
 
@@ -148,7 +136,6 @@ The elasticlens.php config file now requires the following structure:
 
 
 
-
 ```
 •	The **namespaces** key maps models to their respective index namespaces.
 •	The **index_paths** key maps file paths to the corresponding index namespaces.
@@ -170,13 +157,13 @@ The elasticlens.php config file now requires the following structure:
 - Renamed `paginateModels()` to `paginateBase()`
 - Added convenience method `getBase()` that can replace `....->get()->asBase()`
 
-Dependency update to use [laravel-elasticsearch ^v4.4](https://github.com/pdphilip/laravel-elasticsearch/releases/tag/v4.4.0)
+Dependency update to use [laravel-opensearch ^v4.4](https://github.com/pdphilip/laravel-opensearch/releases/tag/v4.4.0)
 
 **Full Changelog**: https://github.com/pdphilip/elasticlens/compare/v1.2.2...v1.3.0
 
 ## v1.2.0 - 2024-09-16
 
-Dependency update to use [laravel-elasticsearch v4.2](https://github.com/pdphilip/laravel-elasticsearch/releases/tag/v4.2.0)
+Dependency update to use [laravel-opensearch v4.2](https://github.com/pdphilip/laravel-opensearch/releases/tag/v4.2.0)
 
 **Full Changelog**: https://github.com/pdphilip/elasticlens/compare/v1.1.0...v1.2.0
 
@@ -188,7 +175,6 @@ Bulk index (re)builder with:
 
 ```bash
 php artisan lens:build {model}
-
 
 
 
@@ -223,14 +209,14 @@ See changelog for other minor updates:
 **Full Changelog**: https://github.com/pdphilip/elasticlens/compare/v1.1.0...v1.1.0
 ## v1.0.0 - 2024-09-02
 ### ElasticLens v1.0.0
-ElasticLens is proud to announce its initial release. This powerful and flexible Laravel package is designed to allow developers to search their Laravel models with the convenience of Eloquent and the power of Elasticsearch.
+ElasticLens is proud to announce its initial release. This powerful and flexible Laravel package is designed to allow developers to search their Laravel models with the convenience of Eloquent and the power of OpenSearch.
 #### Features
-- **Eloquent Integration**: Easily index and search your Laravel models with Elasticsearch.
+- **Eloquent Integration**: Easily index and search your Laravel models with OpenSearch.
 - **Automatic Indexing**: Models are automatically indexed when created, updated, or deleted.
-- **Custom Mappings**: Define custom Elasticsearch mappings for your models.
-- **Flexible Searching**: Perform simple searches or complex queries using Elasticsearch's full-text search capabilities.
-- **Query Builder**: Intuitive query builder for constructing complex Elasticsearch queries.
-- **Aggregations**: Support for Elasticsearch aggregations to perform complex data analysis.
+- **Custom Mappings**: Define custom OpenSearch mappings for your models.
+- **Flexible Searching**: Perform simple searches or complex queries using OpenSearch's full-text search capabilities.
+- **Query Builder**: Intuitive query builder for constructing complex OpenSearch queries.
+- **Aggregations**: Support for OpenSearch aggregations to perform complex data analysis.
 - **Pagination**: Built-in support for paginating search results.
 - **Console Commands**: Artisan commands for managing indices and performing bulk operations.
 - **Model Observers**: Customizable model observation for index builds.
@@ -240,9 +226,9 @@ You can install ElasticLens via Composer:
 composer require pdphilip/elasticlens
 ```
 Then run install:
+
 ```bash
 php artisan lens:install
-
 
 
 

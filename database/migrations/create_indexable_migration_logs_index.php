@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use PDPhilip\Elasticsearch\Schema\Blueprint;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Blueprint;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 return new class extends Migration
 {
     public function up()
     {
-        $connectionName = config('elasticlens.connection') ?? 'elasticsearch';
+        $connectionName = config('elasticlens.connection') ?? 'opensearch';
 
         Schema::on($connectionName)->deleteIfExists('indexable_migration_logs');
 
@@ -17,13 +17,13 @@ return new class extends Migration
             $index->keyword('state');
             $index->integer('version_major');
             $index->integer('version_minor');
-            $index->flattened('map')->indexField(false);
+            $index->property('object', 'map');
         });
     }
 
     public function down()
     {
-        $connectionName = config('elasticlens.connection') ?? 'elasticsearch';
+        $connectionName = config('elasticlens.connection') ?? 'opensearch';
 
         Schema::on($connectionName)->deleteIfExists('indexable_migration_logs');
     }

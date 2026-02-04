@@ -6,7 +6,7 @@ use {{ namespace }}\{{ model }};
 use PDPhilip\ElasticLens\Builder\IndexBuilder;
 use PDPhilip\ElasticLens\Builder\IndexField;
 use PDPhilip\ElasticLens\IndexModel;
-use PDPhilip\Elasticsearch\Schema\Blueprint;
+use PDPhilip\OpenSearch\Schema\Blueprint;
 
 class Indexed{{ model }} extends IndexModel
 {

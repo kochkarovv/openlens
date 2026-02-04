@@ -9,10 +9,10 @@
 
   </p>
     <h3>
-    Search your <strong>Laravel models</strong> with the convenience of Eloquent and the power of Elasticsearch
+    Search your <strong>Laravel models</strong> with the convenience of Eloquent and the power of OpenSearch
   </h3>
   <p>
-ElasticLens for Laravel uses Elasticsearch to create and sync a searchable index of your Laravel models.
+ElasticLens for Laravel uses OpenSearch to create and sync a searchable index of your Laravel models.
   </p>
 </div>
 <div align="center">
@@ -31,7 +31,7 @@ User::viaIndex()->searchPhrase('loves dogs')->where('status','active')->get();
 
 Yes, but mostly no.
 
-**ElasticLens is built from the ground up around Elasticsearch**.
+**ElasticLens is built from the ground up around OpenSearch**.
 
 It integrates directly with the  [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) package (OpenSearch using Eloquent), creating a dedicated `Index-Model` that is fully accessible and automatically synced with
 your `Base-Model`.
@@ -40,7 +40,7 @@ your `Base-Model`.
 <summary> How? </summary>
 
 
-> The `Index-Model` acts as a separate Elasticsearch model managed by ElasticLens, yet you retain full control over it, just like any other Laravel model. In addition to working directly with the `Index-Model`, ElasticLens offers tools for
+> The `Index-Model` acts as a separate OpenSearch model managed by ElasticLens, yet you retain full control over it, just like any other Laravel model. In addition to working directly with the `Index-Model`, ElasticLens offers tools for
 > mapping fields (with embedding relationships) during the build process, and managing index migrations.
 
 > For Example, a base `User` Model will sync with an OpenSearch `IndexedUser` Model that provides all the features from [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) to search your `Base-Model`.
@@ -52,14 +52,14 @@ your `Base-Model`.
 # Requirements
 
 - Laravel 10.x/11.x/12.x
-- OpenSearch 2.x/3.x
+- OpenSearch 8.x
 
 
 # Installation
 
 <details>
 <summary>NB: Before you start, set the Laravel-OpenSearch DB Config (click to expand)</summary>
-    
+
 > See [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) for more details    
 >    
 > Update `.env`
@@ -95,8 +95,8 @@ ES_OPT_DEFAULT_LIMIT=1000
  ```php
 'opensearch' => [
     'driver' => 'opensearch',
-    'auth_type' => env('OS_AUTH_TYPE', 'http'), //http or cloud
-    'hosts' => explode(',', env('OS_HOSTS', 'http://localhost:9200')),
+    'auth_type' => env('ES_AUTH_TYPE', 'http'), //http or cloud
+    'hosts' => explode(',', env('ES_HOSTS', 'http://localhost:9200')),
     'username' => env('ES_USERNAME', ''),
     'password' => env('ES_PASSWORD', ''),
     'cloud_id' => env('ES_CLOUD_ID', ''),
@@ -126,7 +126,7 @@ ES_OPT_DEFAULT_LIMIT=1000
 Install the package via composer:
 
 ```bash
-composer require kochkarovv/elasticlens-opensearch
+composer require pdphilip/elasticlens
 ```
 Publish the config file:
 ```bash
@@ -139,19 +139,19 @@ php artisan migrate
 
 
 
-# Read the [Documentation](https://elasticsearch.pdphilip.com/elasticlens/getting-started/)
+# Read the [Documentation](https://opensearch.pdphilip.com/elasticlens/getting-started/)
 
 
 ## Features
 
-- [Zero config setup](#step-1-zero-config-setup): Start indexing with minimal configuration. [Docs](https://elasticsearch.pdphilip.com/elasticlens/index-model/)
-- [Eloquent Querying](#step-2-search-your-models): Search your models with Eloquent and the full power of Elasticsearch. [Docs](https://elasticsearch.pdphilip.com/elasticlens/full-text-search)
-- [Custom Field Mapping](#step-3-create-a-field-map): Control how your index is built, including [mapping model relationships as embedded fields](#step-4-update-fieldmap-to-include-relationships-as-embedded-fields). [Docs](https://elasticsearch.pdphilip.com/elasticlens/field-mapping/)
-- [Manage Elasticsearch Migrations](#step-5-define-your-index-models-migrationmap): Define a required blueprint for your index migrations. [Docs](https://elasticsearch.pdphilip.com/elasticlens/index-model-migrations/)
-- [Control Observed models](#step-6-fine-tune-the-observers): Tailor which models are observed for changes. [Docs](https://elasticsearch.pdphilip.com/elasticlens/model-observers/)
-- [Comprehensive CLI Tools](#step-7-monitor-and-administer-all-your-indexes-with-artisan-commands): Manage index health, migrate/rebuild indexes, and more with Artisan commands. [Docs](https://elasticsearch.pdphilip.com/elasticlens/artisan-cli-tools/)
-- [Built-in IndexableBuildState model](#step-8-optionally-access-the-built-in-indexablebuild-model-to-track-index-build-states): Track the build states of your indexes. [Docs](https://elasticsearch.pdphilip.com/elasticlens/build-migration-states/)
-- [Built-in Migration Logs](#step-9-optionally-access-the-built-in-indexablemigrationlog-model-for-index-migration-status): Track the build states of your indexes. [Docs](https://elasticsearch.pdphilip.com/elasticlens/build-migration-states/)
+- [Zero config setup](#step-1-zero-config-setup): Start indexing with minimal configuration. [Docs](https://opensearch.pdphilip.com/elasticlens/index-model/)
+- [Eloquent Querying](#step-2-search-your-models): Search your models with Eloquent and the full power of OpenSearch. [Docs](https://opensearch.pdphilip.com/elasticlens/full-text-search)
+- [Custom Field Mapping](#step-3-create-a-field-map): Control how your index is built, including [mapping model relationships as embedded fields](#step-4-update-fieldmap-to-include-relationships-as-embedded-fields). [Docs](https://opensearch.pdphilip.com/elasticlens/field-mapping/)
+- [Manage OpenSearch Migrations](#step-5-define-your-index-models-migrationmap): Define a required blueprint for your index migrations. [Docs](https://opensearch.pdphilip.com/elasticlens/index-model-migrations/)
+- [Control Observed models](#step-6-fine-tune-the-observers): Tailor which models are observed for changes. [Docs](https://opensearch.pdphilip.com/elasticlens/model-observers/)
+- [Comprehensive CLI Tools](#step-7-monitor-and-administer-all-your-indexes-with-artisan-commands): Manage index health, migrate/rebuild indexes, and more with Artisan commands. [Docs](https://opensearch.pdphilip.com/elasticlens/artisan-cli-tools/)
+- [Built-in IndexableBuildState model](#step-8-optionally-access-the-built-in-indexablebuild-model-to-track-index-build-states): Track the build states of your indexes. [Docs](https://opensearch.pdphilip.com/elasticlens/build-migration-states/)
+- [Built-in Migration Logs](#step-9-optionally-access-the-built-in-indexablemigrationlog-model-for-index-migration-status): Track the build states of your indexes. [Docs](https://opensearch.pdphilip.com/elasticlens/build-migration-states/)
 
 
 ### Example Usage
@@ -160,7 +160,7 @@ The Walkthrough below will demonstrate all the features by way of an example. In
 
 # Step 1: Zero config setup 
 
-## [Docs → Indexing your Base-Model](https://elasticsearch.pdphilip.com/elasticlens/index-model/)
+## [Docs → Indexing your Base-Model](https://opensearch.pdphilip.com/elasticlens/index-model/)
 
 #### 1. Add the `Indexable` Trait to Your Base-Model:
 
@@ -204,7 +204,7 @@ User::viaIndex()->searchTerm('running')->orSearchTerm('swimming')->get();
 
 # Step 2: Search your models
 
-## [Docs → Full-text base-model search](https://elasticsearch.pdphilip.com/elasticlens/full-text-search)
+## [Docs → Full-text base-model search](https://opensearch.pdphilip.com/elasticlens/full-text-search)
 
 Perform quick and easy full-text searches:
 
@@ -216,7 +216,7 @@ User::search('loves espressos');
 
 Cute. But that's not why we're here...
 
-To truly harness the power of [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) for eloquent-like querying, you can use more advanced queries:
+To truly harness the power of [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) for eloquent-like querying, you can use more advanced queries:
 
 ```php
 BaseModel::viaIndex()->{build_your_es_eloquent_query}->first();
@@ -238,7 +238,7 @@ User::viaIndex()->searchTerm('nara')
 ```
 
 > This searches all users who are `active` for the term 'nara' across all fields and returns the top 3 results.
-> - [https://elasticsearch.pdphilip.com/full-text-search#term-search-term](https://elasticsearch.pdphilip.com/eloquent/search-queries/#search-term)
+> - [https://opensearch.pdphilip.com/full-text-search#term-search-term](https://opensearch.pdphilip.com/eloquent/search-queries/#search-term)
 
 #### 2. Phrase Search:
 
@@ -249,7 +249,7 @@ User::viaIndex()->searchPhrase('Ice bathing')
 ```
 
 > Searches all fields for the phrase 'Ice bathing' and returns the three newest results. Phrases match exact words in order.
-> - [https://elasticsearch.pdphilip.com/eloquent/search-queries/#search-phrase](https://elasticsearch.pdphilip.com/eloquent/search-queries/#search-phrase)
+> - [https://opensearch.pdphilip.com/eloquent/search-queries/#search-phrase](https://opensearch.pdphilip.com/eloquent/search-queries/#search-phrase)
 
 #### 3. Boosting Terms fields:
 
@@ -258,8 +258,8 @@ User::viaIndex()->searchTerm('David',['first_name^3', 'last_name^2', 'bio'])->ge
 ```
 
 > Searches for the term 'David', boosts the first_name field by 3, last_name by 2, and checks the bio field. Results are ordered by score.
-> - [https://elasticsearch.pdphilip.com/full-text-search#boosting-terms](https://elasticsearch.pdphilip.com/eloquent/search-queries/#parameter-fields)
-> - [https://elasticsearch.pdphilip.com/full-text-search#minimum-score](https://elasticsearch.pdphilip.com/eloquent/search-queries/#parameter-options)
+> - [https://opensearch.pdphilip.com/full-text-search#boosting-terms](https://opensearch.pdphilip.com/eloquent/search-queries/#parameter-fields)
+> - [https://opensearch.pdphilip.com/full-text-search#minimum-score](https://opensearch.pdphilip.com/eloquent/search-queries/#parameter-options)
 
 #### 4. Geolocation Filtering:
 
@@ -271,8 +271,8 @@ User::viaIndex()->where('status', 'active')
 ```
 
 > Finds all active users within a 5km radius from the coordinates [0, 0], ordering them from closest to farthest. Not kidding.
-> - [https://elasticsearch.pdphilip.com/es-specific#geo-point](https://elasticsearch.pdphilip.com/eloquent/es-queries/#where-geo-distance)
-> - [https://elasticsearch.pdphilip.com/ordering-and-pagination#order-by-geo-distance](https://elasticsearch.pdphilip.com/eloquent/ordering-and-pagination/#orderby-geo-distance)
+> - [https://opensearch.pdphilip.com/es-specific#geo-point](https://opensearch.pdphilip.com/eloquent/es-queries/#where-geo-distance)
+> - [https://opensearch.pdphilip.com/ordering-and-pagination#order-by-geo-distance](https://opensearch.pdphilip.com/eloquent/ordering-and-pagination/#orderby-geo-distance)
 
 #### 5. Regex Search:
 
@@ -281,7 +281,7 @@ User::viaIndex()->whereRegex('favourite_color', 'bl(ue)?(ack)?')->get();
 ```
 
 > Finds all users whose favourite colour is blue or black.
-> - [https://elasticsearch.pdphilip.com/full-text-search#regular-expressions](https://elasticsearch.pdphilip.com/eloquent/es-queries/#where-regex)
+> - [https://opensearch.pdphilip.com/full-text-search#regular-expressions](https://opensearch.pdphilip.com/eloquent/es-queries/#where-regex)
 
 #### 6. Pagination:
 
@@ -290,7 +290,7 @@ User::viaIndex()->whereRegex('favorite_color', 'bl(ue)?(ack)?')->paginate(10);
 ```
 
 > Paginate search results.
-> - [https://elasticsearch.pdphilip.com/ordering-and-pagination](https://elasticsearch.pdphilip.com/eloquent/ordering-and-pagination/)
+> - [https://opensearch.pdphilip.com/ordering-and-pagination](https://opensearch.pdphilip.com/eloquent/ordering-and-pagination/)
 
 #### 7. Nested Object Search:
 
@@ -302,7 +302,7 @@ User::viaIndex()->whereNestedObject('user_logs', function (Builder $query) {
 ```
 
 > Searches nested user_logs for users who logged in from Norway within the last week. Whoa.
-> - [https://elasticsearch.pdphilip.com/nested-queries](https://elasticsearch.pdphilip.com/eloquent/nested-queries/)
+> - [https://opensearch.pdphilip.com/nested-queries](https://opensearch.pdphilip.com/eloquent/nested-queries/)
 
 #### 8. Fuzzy Search:
 
@@ -314,7 +314,7 @@ User::viaIndex()->searchFuzzy('quikc')
 ```
 
 > No spell, no problem. Search Fuzzy.
-> - [https://elasticsearch.pdphilip.com/full-text-search](https://elasticsearch.pdphilip.com/eloquent/search-queries/#search-term-fuzzy)
+> - [https://opensearch.pdphilip.com/full-text-search](https://opensearch.pdphilip.com/eloquent/search-queries/#search-term-fuzzy)
 
 #### 9. Highlighting Search Results:
 
@@ -324,7 +324,7 @@ User::viaIndex()->searchTerm('espresso')
 ```
 
 > Searches for 'espresso' across all fields and highlights where it was found.
-> - [https://elasticsearch.pdphilip.com/full-text-search#highlighting](https://elasticsearch.pdphilip.com/eloquent/search-queries/#highlighting)
+> - [https://opensearch.pdphilip.com/full-text-search#highlighting](https://opensearch.pdphilip.com/eloquent/search-queries/#highlighting)
 
 #### 10. Phrase prefix search:
 
@@ -334,7 +334,7 @@ User::viaIndex()->searchPhrasePrefix('loves espr')
 ```
 
 > Searches for the phrase prefix 'loves espr' across all fields and highlights where it was found.
-> - [https://elasticsearch.pdphilip.com/full-text-search#highlighting](https://elasticsearch.pdphilip.com/eloquent/search-queries/#search-phrase-prefix)
+> - [https://opensearch.pdphilip.com/full-text-search#highlighting](https://opensearch.pdphilip.com/eloquent/search-queries/#search-phrase-prefix)
 
 ### Note on `Index-Model` vs `Base-Model` Results
 
@@ -378,7 +378,7 @@ User::viaIndex()->whereRegex('favorite_color', 'bl(ue)?(ack)?')->paginate(10)->a
 
 # Step 3: Create a field Map
 
-## [Docs → Index-model field mapping](https://elasticsearch.pdphilip.com/elasticlens/field-mapping/)
+## [Docs → Index-model field mapping](https://opensearch.pdphilip.com/elasticlens/field-mapping/)
 
 You can define the `fieldMap()` method in your `Index-Model` to control how the index is built during synchronisation.
 
@@ -420,10 +420,10 @@ class IndexedUser extends IndexModel
 
 # Step 4: Update `fieldMap()` to include relationships as embedded fields
 
-## [Docs → Relationships as embedded fields](https://elasticsearch.pdphilip.com/elasticlens/field-mapping/#relationships-as-embedded-fields)
+## [Docs → Relationships as embedded fields](https://opensearch.pdphilip.com/elasticlens/field-mapping/#relationships-as-embedded-fields)
 
 You can further customise indexing by embedding relationships as nested objects within your Index-Model. The builder allows you to define fields and embed relationships, enabling more complex data structures in your
-Elasticsearch index.
+OpenSearch index.
 
 ### Examples:
 
@@ -646,11 +646,11 @@ class IndexedUser extends IndexModel
 
 # Step 5: Define your `Index-Model`'s `migrationMap()`
 
-## [Docs → Index-model migrations](https://elasticsearch.pdphilip.com/elasticlens/index-model-migrations/)
+## [Docs → Index-model migrations](https://opensearch.pdphilip.com/elasticlens/index-model-migrations/)
 
-Elasticsearch automatically indexes new fields it encounters, but it might not always index them in the way you need. To ensure the index is structured correctly, you can define a `migrationMap()` in your Index-Model.
+OpenSearch automatically indexes new fields it encounters, but it might not always index them in the way you need. To ensure the index is structured correctly, you can define a `migrationMap()` in your Index-Model.
 
-Since the `Index-Model` utilises the [Laravel-Elasticsearch](https://github.com/pdphilip/laravel-elasticsearch) package, you can use `IndexBlueprint` to customise your `migrationMap()`
+Since the `Index-Model` utilises the [Laravel-OpenSearch](https://github.com/pdphilip/laravel-opensearch) package, you can use `IndexBlueprint` to customise your `migrationMap()`
 
 ```php
 use PDPhilip\OpenSearch\Schema\Blueprint;
@@ -680,7 +680,7 @@ class IndexedUser extends IndexModel
 
 ### Notes:
 
-- **Documentation**: For more details on migrations, refer to the: https://elasticsearch.pdphilip.com/migrations
+- **Documentation**: For more details on migrations, refer to the: https://opensearch.pdphilip.com/migrations
 - **Running the Migration**: To execute the migration and rebuild all your indexed, use the following command:
 
 ```bash
@@ -691,7 +691,7 @@ This command will delete the existing index, run the migration, and rebuild all 
 
 # Step 6: Fine-tune the Observers
 
-## [Docs → Base Model Observers](https://elasticsearch.pdphilip.com/elasticlens/model-observers/)
+## [Docs → Base Model Observers](https://opensearch.pdphilip.com/elasticlens/model-observers/)
 
 By default, the `Base Model` is observed for changes (saves) and deletions. When the `Base Model` is deleted, the corresponding `Index Model` will also be deleted, even in cases of soft deletion.
 
@@ -756,9 +756,9 @@ class IndexedUser extends IndexModel
 
 # Step 7: Monitor and administer all your indexes with Artisan commands
 
-## [Docs → Artisan CLI Tools](https://elasticsearch.pdphilip.com/elasticlens/artisan-cli-tools/)
+## [Docs → Artisan CLI Tools](https://opensearch.pdphilip.com/elasticlens/artisan-cli-tools/)
 
-Use the following Artisan commands to manage and monitor your Elasticsearch indexes:
+Use the following Artisan commands to manage and monitor your OpenSearch indexes:
 
 1. Check Overall Status:
 
@@ -838,7 +838,7 @@ Rebuilds all the `IndexedProfile` records for the `Profile` model.
 
 # Step 8: Optionally access the built-in `IndexableBuild` model to track index build states
 
-## [Docs → Accessing IndexableBuild model](https://elasticsearch.pdphilip.com/elasticlens/build-migration-states/#accessing-indexablebuild-model)
+## [Docs → Accessing IndexableBuild model](https://opensearch.pdphilip.com/elasticlens/build-migration-states/#accessing-indexablebuild-model)
 
 ElasticLens includes a built-in `IndexableBuild` model that allows you to monitor and track the state of your index builds. This model records the status of each index build, providing you with insights into the indexing process.
 
@@ -880,7 +880,7 @@ used for reading purposes only to ensure accurate monitoring and reporting.
 
 # Step 9: Optionally Access the Built-in `IndexableMigrationLog` Model for Index Migration Status
 
-## [Docs → Access IndexableMigrationLog model](https://elasticsearch.pdphilip.com/elasticlens/build-migration-states/#access-indexablemigrationlog-model) 
+## [Docs → Access IndexableMigrationLog model](https://opensearch.pdphilip.com/elasticlens/build-migration-states/#access-indexablemigrationlog-model) 
 
 ElasticLens includes a built-in `IndexableMigrationLog` model for monitoring and tracking the state of index migrations. This model logs each migration related to an `Index-Model`.
 
@@ -889,7 +889,7 @@ ElasticLens includes a built-in `IndexableMigrationLog` model for monitoring and
 
 - string `$index_model`: The migrated Index-Model.
 - IndexableMigrationLogState `$state`: State of the migration
-- array `$map`: Migration map passed to Elasticsearch.
+- array `$map`: Migration map passed to OpenSearch.
 - int `$version_major`: Major version of the indexing process.
 - int `$version_minor`: Minor version of the indexing process.
 - Carbon `$created_at`: Timestamp of when the migration was created.

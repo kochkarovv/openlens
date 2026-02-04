@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use PDPhilip\Elasticsearch\Schema\Blueprint;
-use PDPhilip\Elasticsearch\Schema\Schema;
+use PDPhilip\OpenSearch\Schema\Blueprint;
+use PDPhilip\OpenSearch\Schema\Schema;
 
 return new class extends Migration
 {
     public function up()
     {
-        $connectionName = config('elasticlens.connection') ?? 'elasticsearch';
+        $connectionName = config('elasticlens.connection') ?? 'opensearch';
 
         Schema::on($connectionName)->deleteIfExists('indexable_builds');
 
@@ -20,14 +20,14 @@ return new class extends Migration
             $index->keyword('last_source');
             $index->text('last_source');
 
-            $index->flattened('state_data')->indexField(false);
-            $index->flattened('logs')->indexField(false);
+            $index->property('object', 'state_data');
+            $index->property('object', 'logs');
         });
     }
 
     public function down()
     {
-        $connectionName = config('elasticlens.connection') ?? 'elasticsearch';
+        $connectionName = config('elasticlens.connection') ?? 'opensearch';
 
         Schema::on($connectionName)->deleteIfExists('indexable_builds');
     }
