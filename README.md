@@ -65,29 +65,29 @@ your `Base-Model`.
 > Update `.env`
 
 ```dotenv
-ES_AUTH_TYPE=http
-ES_HOSTS="http://localhost:9200"
-ES_USERNAME=
-ES_PASSWORD=
-ES_CLOUD_ID=
-ES_API_ID=
-ES_API_KEY=
-ES_SSL_CA=
-ES_INDEX_PREFIX=my_app_
+OS_AUTH_TYPE=http
+OS_HOSTS="http://localhost:9200"
+OS_USERNAME=
+OS_PASSWORD=
+OS_CLOUD_ID=
+OS_API_ID=
+OS_API_KEY=
+OS_SSL_CA=
+OS_INDEX_PREFIX=my_app_
 # prefix will be added to all indexes created by the package with an underscore
 # ex: my_app_user_logs for UserLog model
-ES_SSL_CERT=
-ES_SSL_CERT_PASSWORD=
-ES_SSL_KEY=
-ES_SSL_KEY_PASSWORD=
+OS_SSL_CERT=
+OS_SSL_CERT_PASSWORD=
+OS_SSL_KEY=
+OS_SSL_KEY_PASSWORD=
 # Options
-ES_OPT_ID_SORTABLE=false
-ES_OPT_VERIFY_SSL=true
-ES_OPT_RETRIES=
-ES_OPT_META_HEADERS=true
-ES_ERROR_INDEX=
-ES_OPT_BYPASS_MAP_VALIDATION=false
-ES_OPT_DEFAULT_LIMIT=1000
+OS_OPT_ID_SORTABLE=false
+OS_OPT_VERIFY_SSL=true
+OS_OPT_RETRIES=
+OS_OPT_META_HEADERS=true
+OS_ERROR_INDEX=
+OS_OPT_BYPASS_MAP_VALIDATION=false
+OS_OPT_DEFAULT_LIMIT=1000
 ```
 
 > Update `config/database.php`
@@ -95,29 +95,29 @@ ES_OPT_DEFAULT_LIMIT=1000
  ```php
 'opensearch' => [
     'driver' => 'opensearch',
-    'auth_type' => env('ES_AUTH_TYPE', 'http'), //http or cloud
-    'hosts' => explode(',', env('ES_HOSTS', 'http://localhost:9200')),
-    'username' => env('ES_USERNAME', ''),
-    'password' => env('ES_PASSWORD', ''),
-    'cloud_id' => env('ES_CLOUD_ID', ''),
-    'api_id' => env('ES_API_ID', ''),
-    'api_key' => env('ES_API_KEY', ''),
-    'ssl_cert' => env('ES_SSL_CA', ''),
+    'auth_type' => env('OS_AUTH_TYPE', 'http'), //http or cloud
+    'hosts' => explode(',', env('OS_HOSTS', 'http://localhost:9200')),
+    'username' => env('OS_USERNAME', ''),
+    'password' => env('OS_PASSWORD', ''),
+    'cloud_id' => env('OS_CLOUD_ID', ''),
+    'api_id' => env('OS_API_ID', ''),
+    'api_key' => env('OS_API_KEY', ''),
+    'ssl_cert' => env('OS_SSL_CA', ''),
     'ssl' => [
-        'cert' => env('ES_SSL_CERT', ''),
-        'cert_password' => env('ES_SSL_CERT_PASSWORD', ''),
-        'key' => env('ES_SSL_KEY', ''),
-        'key_password' => env('ES_SSL_KEY_PASSWORD', ''),
+        'cert' => env('OS_SSL_CERT', ''),
+        'cert_password' => env('OS_SSL_CERT_PASSWORD', ''),
+        'key' => env('OS_SSL_KEY', ''),
+        'key_password' => env('OS_SSL_KEY_PASSWORD', ''),
     ],
-    'index_prefix' => env('ES_INDEX_PREFIX', false),
+    'index_prefix' => env('OS_INDEX_PREFIX', false),
     'options' => [
-        'bypass_map_validation' => env('ES_OPT_BYPASS_MAP_VALIDATION', false),
-        'logging' => env('ES_OPT_LOGGING', false),
-        'ssl_verification' => env('ES_OPT_VERIFY_SSL', true),
-        'retires' => env('ES_OPT_RETRIES', null),
-        'meta_header' => env('ES_OPT_META_HEADERS', true),
-        'default_limit' => env('ES_OPT_DEFAULT_LIMIT', 1000),
-        'allow_id_sort' => env('ES_OPT_ID_SORTABLE', false),
+        'bypass_map_validation' => env('OS_OPT_BYPASS_MAP_VALIDATION', false),
+        'logging' => env('OS_OPT_LOGGING', false),
+        'ssl_verification' => env('OS_OPT_VERIFY_SSL', true),
+        'retires' => env('OS_OPT_RETRIES', null),
+        'meta_header' => env('OS_OPT_META_HEADERS', true),
+        'default_limit' => env('OS_OPT_DEFAULT_LIMIT', 1000),
+        'allow_id_sort' => env('OS_OPT_ID_SORTABLE', false),
     ],
 ],
 ```
