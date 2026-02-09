@@ -181,7 +181,14 @@ class IndexableBuild extends Model
 
     public static function sanitizeIndexModelName($indexModel): string
     {
-        return strtolower(class_basename($indexModel));
+        // If it's a class name (contains backslashes), use getModelIdentifier
+        if (is_string($indexModel) && str_contains($indexModel, '\\')) {
+            if (method_exists($indexModel, 'getModelIdentifier')) {
+                return $indexModel::getModelIdentifier();
+            }
+        }
+        // Otherwise, assume it's already sanitized or just lowercase it
+        return strtolower($indexModel);
     }
 
     // ----------------------------------------------------------------------

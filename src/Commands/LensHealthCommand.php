@@ -26,6 +26,36 @@ class LensHealthCommand extends Command
     {
         $this->initOmni();
         $model = $this->argument('model');
+        
+        // Check for multiple matches first
+        $modelCheck = \PDPhilip\ElasticLens\Commands\Scripts\QualifyModel::check($model);
+        if (count($modelCheck['matches']) > 1) {
+            $this->omni->statusWarning('MULTIPLE MODELS', 'Found multiple models with the same name', [
+                'Please select which model you want to check:'
+            ]);
+            $this->newLine();
+            
+            $choices = [];
+            foreach ($modelCheck['matches'] as $index => $matchedModel) {
+                $choices[] = ($index + 1) . '. ' . $matchedModel;
+            }
+            
+            $selection = $this->omni->ask('Select model (enter number)', $choices);
+            
+            // Extract the number from the selection
+            if (preg_match('/^(\d+)\./', $selection, $matches)) {
+                $selectedIndex = (int)$matches[1] - 1;
+                if (isset($modelCheck['matches'][$selectedIndex])) {
+                    $model = $modelCheck['matches'][$selectedIndex];
+                } else {
+                    $this->omni->statusError('ERROR', 'Invalid selection');
+                    return self::FAILURE;
+                }
+            } else {
+                $this->omni->statusError('ERROR', 'Invalid selection');
+                return self::FAILURE;
+            }
+        }
 
         $loadError = HealthCheck::loadErrorCheck($model);
         $this->newLine();

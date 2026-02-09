@@ -51,12 +51,42 @@ class LensMigrateCommand extends Command
         $model = $this->argument('model');
         $force = $this->option('force');
         $modelCheck = QualifyModel::check($model);
-        if (! $modelCheck['qualified']) {
+        
+        // Handle multiple matches - prompt user to choose
+        if (count($modelCheck['matches']) > 1) {
+            $this->omni->statusWarning('MULTIPLE MODELS', 'Found multiple models with the same name', [
+                'Please select which model you want to migrate:'
+            ]);
+            $this->newLine();
+            
+            $choices = [];
+            foreach ($modelCheck['matches'] as $index => $matchedModel) {
+                $choices[] = ($index + 1) . '. ' . $matchedModel;
+            }
+            
+            $selection = $this->omni->ask('Select model (enter number)', $choices);
+            
+            // Extract the number from the selection
+            if (preg_match('/^(\d+)\./', $selection, $matches)) {
+                $selectedIndex = (int)$matches[1] - 1;
+                if (isset($modelCheck['matches'][$selectedIndex])) {
+                    $model = $modelCheck['matches'][$selectedIndex];
+                } else {
+                    $this->omni->statusError('ERROR', 'Invalid selection');
+                    return self::FAILURE;
+                }
+            } else {
+                $this->omni->statusError('ERROR', 'Invalid selection');
+                return self::FAILURE;
+            }
+        } elseif (! $modelCheck['qualified']) {
             $this->omni->statusError('ERROR', 'Model not found', ['Model: '.$model]);
 
             return self::FAILURE;
+        } else {
+            $model = $modelCheck['qualified'];
         }
-        $model = $modelCheck['qualified'];
+        
         $this->model = $model;
         $this->indexModel = Lens::fetchIndexModelClass($model);
         $this->newLine();

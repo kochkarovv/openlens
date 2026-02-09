@@ -91,6 +91,37 @@ abstract class IndexModel extends Model
         return $this->base;
     }
 
+    /**
+     * Get a unique identifier for the model that includes namespace.
+     * Converts namespace separators to underscores for compatibility.
+     */
+    protected static function getModelIdentifier(): string
+    {
+        // Convert full class name to snake_case identifier
+        // e.g., App\Modules\OpenSearch\Indexes\HelpCenter\IndexedTopic -> indexed_topic_help_center
+        $className = static::class;
+        $parts = explode('\\', $className);
+        $basename = array_pop($parts);
+        
+        // Get parent namespace (e.g., HelpCenter, AdminPanel\FAQ)
+        $namespace = '';
+        if (count($parts) >= 2) {
+            // Take last 1-2 namespace parts for uniqueness
+            $relevantParts = array_slice($parts, -1);
+            $namespace = implode('_', array_map('strtolower', $relevantParts));
+            $namespace = str_replace('\\', '_', $namespace);
+        }
+        
+        $identifier = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $basename));
+        
+        // Append namespace suffix if exists to ensure uniqueness
+        if ($namespace && !str_contains($identifier, $namespace)) {
+            $identifier = $identifier . '_' . $namespace;
+        }
+        
+        return $identifier;
+    }
+
     public static function lensHealth(): array
     {
         $lens = new LensState(static::class);
@@ -101,7 +132,7 @@ abstract class IndexModel extends Model
     public static function whereIndexBuilds($byLatest = false): Builder
     {
 
-        $indexModel = strtolower(class_basename(static::class));
+        $indexModel = static::getModelIdentifier();
         $query = IndexableBuild::query()->where('index_model', $indexModel);
         if ($byLatest) {
             $query->orderByDesc('created_at');
@@ -112,7 +143,7 @@ abstract class IndexModel extends Model
 
     public static function whereFailedIndexBuilds($byLatest = false): Builder
     {
-        $indexModel = strtolower(class_basename(static::class));
+        $indexModel = static::getModelIdentifier();
         $query = IndexableBuild::query()->where('index_model', $indexModel)->where('state', IndexableBuildState::FAILED);
         if ($byLatest) {
             $query->orderByDesc('created_at');
@@ -123,7 +154,7 @@ abstract class IndexModel extends Model
 
     public static function whereMigrations($byLatest = false): Builder
     {
-        $indexModel = strtolower(class_basename(static::class));
+        $indexModel = static::getModelIdentifier();
         $query = IndexableMigrationLog::query()->where('index_model', $indexModel);
         if ($byLatest) {
             $query->orderByDesc('created_at');
@@ -134,7 +165,7 @@ abstract class IndexModel extends Model
 
     public static function whereMigrationErrors($byLatest = false): Builder
     {
-        $indexModel = strtolower(class_basename(static::class));
+        $indexModel = static::getModelIdentifier();
         $query = IndexableMigrationLog::query()->where('index_model', $indexModel)->where('state', IndexableMigrationLogState::FAILED);
         if ($byLatest) {
             $query->orderByDesc('created_at');

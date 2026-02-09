@@ -177,7 +177,7 @@ class LensBuildLogsCommand extends Command
         $this->omni->row('Index Model', $build->index_model);
         $this->omni->row('Model', $build->model);
         $this->omni->row('Model ID', $build->model_id);
-        $color = $build->state->color;
+        $color = $build->state->colorStyle();
         $this->omni->row('State', $build->state_name, null, $color);
         $this->omni->row('Last Source', $build->last_source ?? 'N/A');
         $this->omni->row('Updated At', $build->updated_at?->format('Y-m-d H:i:s') ?? 'N/A');

@@ -112,7 +112,7 @@ class LensMigrationLogsCommand extends Command
         $this->omni->header('ID', 'Version', 'State / Date');
 
         foreach ($migrations as $migration) {
-            $color = $migration->state->color();
+            $color = $migration->state->colorStyle();
 
             $this->omni->row(
                 substr($migration->id, 0, 8),
@@ -165,7 +165,7 @@ class LensMigrationLogsCommand extends Command
             return self::FAILURE;
         }
 
-        $statusType = $migration->state->color();
+        $statusType = $migration->state->colorStyle();
 
         $this->omni->status($statusType, 'Migration Details', $migration->state->value);
         $this->newLine();
@@ -174,7 +174,7 @@ class LensMigrationLogsCommand extends Command
         $this->omni->row('Migration ID', $migration->id);
         $this->omni->row('Index Model', $migration->index_model);
         $this->omni->row('Version', $migration->version);
-        $color = $migration->state->color();
+        $color = $migration->state->colorStyle();
         $this->omni->row('State', $migration->state->value, null, $color);
         $this->omni->row('Created At', $migration->created_at?->format('Y-m-d H:i:s') ?? 'N/A');
 

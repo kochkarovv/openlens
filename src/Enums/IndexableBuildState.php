@@ -21,6 +21,17 @@ enum IndexableBuildState: string
         };
     }
 
+
+    public function colorStyle(): string
+    {
+        return match ($this) {
+            IndexableBuildState::INIT => 'text-slate-500',
+            IndexableBuildState::SUCCESS => 'text-emerald-500',
+            IndexableBuildState::SKIPPED => 'text-emerald-500',
+            IndexableBuildState::FAILED => 'text-rose-500',
+        };
+    }
+
     public function label(): string
     {
         return match ($this) {
