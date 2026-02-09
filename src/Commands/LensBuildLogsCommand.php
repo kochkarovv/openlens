@@ -177,12 +177,7 @@ class LensBuildLogsCommand extends Command
         $this->omni->row('Index Model', $build->index_model);
         $this->omni->row('Model', $build->model);
         $this->omni->row('Model ID', $build->model_id);
-        $color = match ($build->state) {
-            IndexableBuildState::SUCCESS => 'text-emerald-500',
-            IndexableBuildState::FAILED => 'text-rose-500',
-            IndexableBuildState::SKIPPED => 'text-amber-500',
-            default => 'text-slate-500',
-        };
+        $color = $build->state->color;
         $this->omni->row('State', $build->state_name, null, $color);
         $this->omni->row('Last Source', $build->last_source ?? 'N/A');
         $this->omni->row('Updated At', $build->updated_at?->format('Y-m-d H:i:s') ?? 'N/A');

@@ -112,12 +112,7 @@ class LensMigrationLogsCommand extends Command
         $this->omni->header('ID', 'Version', 'State / Date');
 
         foreach ($migrations as $migration) {
-            $color = match ($migration->state) {
-                IndexableMigrationLogState::SUCCESS => 'text-emerald-500',
-                IndexableMigrationLogState::FAILED => 'text-rose-500',
-                IndexableMigrationLogState::UNDEFINED => 'text-amber-500',
-                default => 'text-slate-500',
-            };
+            $color = $migration->state->color();
 
             $this->omni->row(
                 substr($migration->id, 0, 8),
@@ -170,12 +165,7 @@ class LensMigrationLogsCommand extends Command
             return self::FAILURE;
         }
 
-        $statusType = match ($migration->state) {
-            IndexableMigrationLogState::SUCCESS => 'success',
-            IndexableMigrationLogState::FAILED => 'error',
-            IndexableMigrationLogState::UNDEFINED => 'warning',
-            default => 'info',
-        };
+        $statusType = $migration->state->color();
 
         $this->omni->status($statusType, 'Migration Details', $migration->state->value);
         $this->newLine();
@@ -184,12 +174,7 @@ class LensMigrationLogsCommand extends Command
         $this->omni->row('Migration ID', $migration->id);
         $this->omni->row('Index Model', $migration->index_model);
         $this->omni->row('Version', $migration->version);
-        $color = match ($migration->state) {
-            IndexableMigrationLogState::SUCCESS => 'text-emerald-500',
-            IndexableMigrationLogState::FAILED => 'text-rose-500',
-            IndexableMigrationLogState::UNDEFINED => 'text-amber-500',
-            default => 'text-slate-500',
-        };
+        $color = $migration->state->color();
         $this->omni->row('State', $migration->state->value, null, $color);
         $this->omni->row('Created At', $migration->created_at?->format('Y-m-d H:i:s') ?? 'N/A');
 
