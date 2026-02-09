@@ -59,7 +59,7 @@ class LensBuildLogsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->omni->header('Index Model', 'Failed', 'Skipped', 'Success', 'Total');
+        $this->omni->header('Index Model', 'Failed', 'S/S/T');
 
         foreach ($models as $model) {
             $failed = IndexableBuild::countModelErrors($model);
@@ -70,17 +70,23 @@ class LensBuildLogsCommand extends Command
             $this->omni->row(
                 $model,
                 $failed,
-                $skipped,
-                $success,
-                $total,
-                null,
+                "{$skipped} / {$success} / {$total}",
                 $failed > 0 ? 'text-rose-500' : 'text-emerald-500'
             );
         }
 
         $this->newLine();
-        $this->omni->info('Run `lens:build-logs {indexModel}` to view details for a specific model');
-        $this->newLine();
+
+        $options = $models->toArray();
+        $options[] = 'Cancel';
+
+        $selection = $this->omni->ask('Select an Index Model to view failed builds', $options);
+
+        if ($selection !== 'Cancel') {
+            $this->newLine();
+
+            return $this->showModelBuilds($selection);
+        }
 
         return self::SUCCESS;
     }
@@ -106,17 +112,14 @@ class LensBuildLogsCommand extends Command
         $this->omni->status('info', 'Failed Builds', 'Showing '.$builds->count().' most recent failures for '.$indexModel);
         $this->newLine();
 
-        $this->omni->header('ID', 'Model ID', 'State', 'Error Snippet', 'Updated At');
+        $this->omni->header('ID', 'Model ID', 'State / Snippet');
 
         foreach ($builds as $build) {
             $errorSnippet = $this->extractErrorSnippet($build);
             $this->omni->row(
                 substr($build->id, 0, 8),
                 $build->model_id,
-                $build->state_name,
-                $errorSnippet,
-                $build->updated_at?->format('Y-m-d H:i:s') ?? 'N/A',
-                null,
+                $build->state_name.' - '.$errorSnippet,
                 'text-rose-500'
             );
         }
@@ -125,14 +128,22 @@ class LensBuildLogsCommand extends Command
         $this->omni->info('Run `lens:build-logs --id={id}` to view full details');
         $this->newLine();
 
-        // Ask if user wants to view details
-        $viewDetail = $this->omni->ask('View details for a specific build?', ['yes', 'no']);
+        // Create options for the choice menu
+        $options = $builds->mapWithKeys(function ($build) {
+            $snippet = $this->extractErrorSnippet($build);
+            $label = sprintf("[%s] ID: %s - %s", $build->model_id, substr($build->id, 0, 8), $snippet);
+            return [$build->id => $label];
+        })->toArray();
 
-        if (in_array($viewDetail, ['yes', 'y'])) {
-            $buildId = $this->omni->ask('Enter build ID (first 8 chars or full ID)');
+        $options['cancel'] = 'Cancel';
+
+        $selection = $this->omni->ask('Select a build to view details', array_values($options));
+
+        if ($selection !== 'Cancel') {
+            // Find the ID by the label
+            $buildId = array_search($selection, $options);
             if ($buildId) {
                 $this->newLine();
-
                 return $this->showBuildDetail($buildId);
             }
         }
@@ -146,9 +157,9 @@ class LensBuildLogsCommand extends Command
         $build = IndexableBuild::find($buildId);
 
         if (! $build && strlen($buildId) < 32) {
-            $build = IndexableBuild::query()
-                ->where('id', 'like', $buildId.'%')
-                ->first();
+            // Since OpenSearch doesn't support wildcard/like on the internal _id field,
+            // we can't do a partial match via query. 
+            // We'll just return null and let the error handler catch it.
         }
 
         if (! $build) {
@@ -166,7 +177,13 @@ class LensBuildLogsCommand extends Command
         $this->omni->row('Index Model', $build->index_model);
         $this->omni->row('Model', $build->model);
         $this->omni->row('Model ID', $build->model_id);
-        $this->omni->row('State', $build->state_name, null, $build->state_color);
+        $color = match ($build->state) {
+            IndexableBuildState::SUCCESS => 'text-emerald-500',
+            IndexableBuildState::FAILED => 'text-rose-500',
+            IndexableBuildState::SKIPPED => 'text-amber-500',
+            default => 'text-slate-500',
+        };
+        $this->omni->row('State', $build->state_name, null, $color);
         $this->omni->row('Last Source', $build->last_source ?? 'N/A');
         $this->omni->row('Updated At', $build->updated_at?->format('Y-m-d H:i:s') ?? 'N/A');
 

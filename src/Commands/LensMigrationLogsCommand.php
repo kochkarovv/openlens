@@ -59,7 +59,7 @@ class LensMigrationLogsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->omni->header('Index Model', 'Latest Version', 'Total Migrations', 'Last Migration');
+        $this->omni->header('Index Model', 'Version', 'Migrations / Last');
 
         foreach ($models as $model) {
             $latest = IndexableMigrationLog::getLatestMigration($model);
@@ -68,14 +68,22 @@ class LensMigrationLogsCommand extends Command
             $this->omni->row(
                 $model,
                 $latest?->version ?? 'N/A',
-                $total,
-                $latest?->created_at?->format('Y-m-d H:i:s') ?? 'N/A'
+                $total.' ('.$latest?->created_at?->format('Y-m-d H:i:s').')'
             );
         }
 
         $this->newLine();
-        $this->omni->info('Run `lens:migration-logs {indexModel}` to view migration history for a specific model');
-        $this->newLine();
+
+        $options = $models->toArray();
+        $options[] = 'Cancel';
+
+        $selection = $this->omni->ask('Select an Index Model to view migration logs', $options);
+
+        if ($selection !== 'Cancel') {
+            $this->newLine();
+
+            return $this->showModelMigrations($selection);
+        }
 
         return self::SUCCESS;
     }
@@ -101,7 +109,7 @@ class LensMigrationLogsCommand extends Command
         $this->omni->status('info', 'Migration History', 'Showing '.$migrations->count().' most recent migrations for '.$indexModel);
         $this->newLine();
 
-        $this->omni->header('ID', 'Version', 'State', 'Created At');
+        $this->omni->header('ID', 'Version', 'State / Date');
 
         foreach ($migrations as $migration) {
             $color = match ($migration->state) {
@@ -114,9 +122,7 @@ class LensMigrationLogsCommand extends Command
             $this->omni->row(
                 substr($migration->id, 0, 8),
                 $migration->version,
-                $migration->state->value,
-                $migration->created_at?->format('Y-m-d H:i:s') ?? 'N/A',
-                null,
+                $migration->state->value.' ('.$migration->created_at?->format('Y-m-d H:i:s').')',
                 $color
             );
         }
@@ -125,14 +131,21 @@ class LensMigrationLogsCommand extends Command
         $this->omni->info('Run `lens:migration-logs --id={id}` to view full details');
         $this->newLine();
 
-        // Ask if user wants to view details
-        $viewDetail = $this->omni->ask('View details for a specific migration?', ['yes', 'no']);
+        // Create options for the choice menu
+        $options = $migrations->mapWithKeys(function ($m) {
+            $label = sprintf("[%s] ID: %s (%s)", $m->version, substr($m->id, 0, 8), $m->created_at?->format('Y-m-d H:i:s'));
+            return [$m->id => $label];
+        })->toArray();
 
-        if (in_array($viewDetail, ['yes', 'y'])) {
-            $migrationId = $this->omni->ask('Enter migration ID (first 8 chars or full ID)');
+        $options['cancel'] = 'Cancel';
+
+        $selection = $this->omni->ask('Select a migration to view details', array_values($options));
+
+        if ($selection !== 'Cancel') {
+            // Find the ID by the label
+            $migrationId = array_search($selection, $options);
             if ($migrationId) {
                 $this->newLine();
-
                 return $this->showMigrationDetail($migrationId);
             }
         }
@@ -146,9 +159,8 @@ class LensMigrationLogsCommand extends Command
         $migration = IndexableMigrationLog::find($migrationId);
 
         if (! $migration && strlen($migrationId) < 32) {
-            $migration = IndexableMigrationLog::query()
-                ->where('id', 'like', $migrationId.'%')
-                ->first();
+            // OpenSearch does not support wildcard searching on the internal _id field.
+            // We rely on the exact ID or pre-matched partial ID from the interactive step.
         }
 
         if (! $migration) {
@@ -172,7 +184,13 @@ class LensMigrationLogsCommand extends Command
         $this->omni->row('Migration ID', $migration->id);
         $this->omni->row('Index Model', $migration->index_model);
         $this->omni->row('Version', $migration->version);
-        $this->omni->row('State', $migration->state->value);
+        $color = match ($migration->state) {
+            IndexableMigrationLogState::SUCCESS => 'text-emerald-500',
+            IndexableMigrationLogState::FAILED => 'text-rose-500',
+            IndexableMigrationLogState::UNDEFINED => 'text-amber-500',
+            default => 'text-slate-500',
+        };
+        $this->omni->row('State', $migration->state->value, null, $color);
         $this->omni->row('Created At', $migration->created_at?->format('Y-m-d H:i:s') ?? 'N/A');
 
         $this->newLine();
