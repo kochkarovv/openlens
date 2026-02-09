@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace PDPhilip\ElasticLens;
 
 use PDPhilip\ElasticLens\Commands\LensBuildCommand;
+use PDPhilip\ElasticLens\Commands\LensBuildLogsCommand;
 use PDPhilip\ElasticLens\Commands\LensHealthCommand;
 use PDPhilip\ElasticLens\Commands\LensMakeCommand;
 use PDPhilip\ElasticLens\Commands\LensMigrateCommand;
+use PDPhilip\ElasticLens\Commands\LensMigrationLogsCommand;
 use PDPhilip\ElasticLens\Commands\LensStatusCommand;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -33,6 +35,8 @@ class ElasticLensServiceProvider extends PackageServiceProvider
             ->hasCommand(LensBuildCommand::class)
             ->hasCommand(LensMigrateCommand::class)
             ->hasCommand(LensMakeCommand::class)
+            ->hasCommand(LensBuildLogsCommand::class)
+            ->hasCommand(LensMigrationLogsCommand::class)
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->setName('lens:install')
