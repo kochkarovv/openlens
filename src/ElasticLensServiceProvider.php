@@ -11,12 +11,32 @@ use PDPhilip\ElasticLens\Commands\LensMakeCommand;
 use PDPhilip\ElasticLens\Commands\LensMigrateCommand;
 use PDPhilip\ElasticLens\Commands\LensMigrationLogsCommand;
 use PDPhilip\ElasticLens\Commands\LensStatusCommand;
+use PDPhilip\ElasticLens\Database\Connection;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class ElasticLensServiceProvider extends PackageServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $registerDriver = function ($db) {
+            $db->extend('opensearch', function ($config, $name) {
+                $config['name'] = $name;
+
+                return new Connection($config);
+            });
+        };
+
+        $this->app->resolving('db', $registerDriver);
+
+        if ($this->app->resolved('db')) {
+            $registerDriver($this->app->make('db'));
+        }
+    }
+
     public function configurePackage(Package $package): void
     {
         /*
