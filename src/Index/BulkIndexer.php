@@ -25,7 +25,7 @@ class BulkIndexer
 
     protected mixed $took;
 
-    protected mixed $result;
+    protected mixed $result = [];
 
     public int $skipped = 0;
 
