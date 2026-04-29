@@ -79,3 +79,27 @@ it('returns null when _id is in bool filter instead of must', function () {
 it('returns null when query has no _id at all', function () {
     expect(callExtractSingleId([]))->toBeNull();
 });
+
+it('casts integer _id to string in plain term query', function () {
+    $query = ['term' => ['_id' => 1569]];
+
+    expect(callExtractSingleId($query))->toBe('1569');
+});
+
+it('casts integer _id to string in array value form', function () {
+    $query = ['term' => ['_id' => ['value' => 1569]]];
+
+    expect(callExtractSingleId($query))->toBe('1569');
+});
+
+it('casts integer _id to string in single-must bool query', function () {
+    $query = [
+        'bool' => [
+            'must' => [
+                ['term' => ['_id' => 1569]],
+            ],
+        ],
+    ];
+
+    expect(callExtractSingleId($query))->toBe('1569');
+});
