@@ -62,8 +62,9 @@ class Connection extends BaseConnection
         // {"term": {"_id": "some-id"}}
         if (isset($bodyQuery['term']['_id'])) {
             $id = $bodyQuery['term']['_id'];
+            $value = is_array($id) ? ($id['value'] ?? null) : $id;
 
-            return is_array($id) ? ($id['value'] ?? null) : (string) $id;
+            return $value !== null ? (string) $value : null;
         }
 
         // {"bool": {"must": [{"term": {"_id": "some-id"}}]}}
@@ -73,8 +74,9 @@ class Connection extends BaseConnection
             && isset($bodyQuery['bool']['must'][0]['term']['_id'])
         ) {
             $id = $bodyQuery['bool']['must'][0]['term']['_id'];
+            $value = is_array($id) ? ($id['value'] ?? null) : $id;
 
-            return is_array($id) ? ($id['value'] ?? null) : (string) $id;
+            return $value !== null ? (string) $value : null;
         }
 
         return null;
