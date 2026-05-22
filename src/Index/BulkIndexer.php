@@ -89,7 +89,15 @@ class BulkIndexer
         }
         $this->updateAnyErrors();
         $this->result['skipped'] = $this->skipped;
-        BulkBuildStateUpdateJob::dispatch($this->indexModel, $this->baseModel, $this->buildMaps);
+        $buildStates = [];
+        foreach ($this->buildMaps as $id => $build) {
+            $state = $build->toArray();
+            if ($build->success || $build->skipped) {
+                $state['map'] = [];
+            }
+            $buildStates[$id] = $state;
+        }
+        BulkBuildStateUpdateJob::dispatch($this->indexModel, $this->baseModel, $buildStates);
         $this->took = $this->getTime();
 
         return $this;
