@@ -77,11 +77,25 @@ class BuildResult
             'id' => $this->id,
             'model' => $this->model,
             'success' => $this->success,
+            'skipped' => $this->skipped,
             'msg' => $this->msg,
             'details' => $this->details,
             'map' => $this->map,
             'migration_version' => $this->migration_version,
             'took' => $this->took,
         ];
+    }
+
+    public static function fromArray(array $data): static
+    {
+        $instance = new static($data['id'], $data['model'], $data['migration_version'] ?? 0);
+        $instance->success = $data['success'] ?? false;
+        $instance->skipped = $data['skipped'] ?? false;
+        $instance->msg = $data['msg'] ?? '';
+        $instance->details = $data['details'] ?? '';
+        $instance->map = $data['map'] ?? [];
+        $instance->took = $data['took'] ?? [];
+
+        return $instance;
     }
 }
