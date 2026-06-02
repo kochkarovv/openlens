@@ -35,10 +35,10 @@ class LensBuilder extends LensIndex
         return $this->buildResult;
     }
 
-    public function prepareMap($id)
+    public function prepareMap($id, $preloadedModel = null)
     {
         $this->_buildInit($id);
-        $this->_buildMap();
+        $this->_buildMap($preloadedModel);
 
         return $this->buildResult;
     }
@@ -127,12 +127,12 @@ class LensBuilder extends LensIndex
     // Mapping Process
     // ----------------------------------------------------------------------
 
-    private function _buildMap(): bool
+    private function _buildMap($preloadedModel = null): bool
     {
         $id = $this->buildResult->id;
         $fieldMap = $this->fieldMap;
 
-        $model = $this->baseModelInstance->find($id);
+        $model = $preloadedModel ?? $this->baseModelInstance->find($id);
         if (! $model) {
             $this->buildResult->setMessage('BaseModel not found', 'BaseModel '.$this->baseModel.' did not have a record for id: '.$id);
 
