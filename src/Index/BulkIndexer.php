@@ -55,7 +55,7 @@ class BulkIndexer
         if ($records) {
             foreach ($records as $record) {
                 $id = $record->{$this->builder->baseModelPrimaryKey};
-                $setup = $this->builder->prepareMap($id);
+                $setup = $this->builder->prepareMap($id, $record);
                 $setup->attachMigrationVersion($this->migrationVersion);
                 // Assume ok
                 if (! $setup->skipped) {
