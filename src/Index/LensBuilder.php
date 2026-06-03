@@ -221,6 +221,24 @@ class LensBuilder extends LensIndex
         if (! empty($relationships[$field])) {
             $relationship = $relationships[$field];
             $type = $relationship['type'];
+
+            // Short-circuit: use the already-loaded relation to avoid an N+1 query.
+            if (method_exists($parentData, 'relationLoaded') && $parentData->relationLoaded($field)) {
+                $loaded = $parentData->getRelation($field);
+                if ($type == 'hasMany') {
+                    foreach (($loaded ?? []) as $record) {
+                        $data[] = $this->mapRecordsToFields($embedFields, $record);
+                    }
+
+                    return $data;
+                }
+                if ($loaded) {
+                    $data = $this->mapRecordsToFields($embedFields, $loaded);
+                }
+
+                return $data;
+            }
+
             $relation = $relationship['relation'];
             $whereRelatedField = $relationship['whereRelatedField'];
             $equalsModelField = $relationship['equalsModelField'];
