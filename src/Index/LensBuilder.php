@@ -35,10 +35,10 @@ class LensBuilder extends LensIndex
         return $this->buildResult;
     }
 
-    public function prepareMap($id)
+    public function prepareMap($id, $preloadedModel = null)
     {
         $this->_buildInit($id);
-        $this->_buildMap();
+        $this->_buildMap($preloadedModel);
 
         return $this->buildResult;
     }
@@ -127,12 +127,12 @@ class LensBuilder extends LensIndex
     // Mapping Process
     // ----------------------------------------------------------------------
 
-    private function _buildMap(): bool
+    private function _buildMap($preloadedModel = null): bool
     {
         $id = $this->buildResult->id;
         $fieldMap = $this->fieldMap;
 
-        $model = $this->baseModelInstance->find($id);
+        $model = $preloadedModel ?? $this->baseModelInstance->find($id);
         if (! $model) {
             $this->buildResult->setMessage('BaseModel not found', 'BaseModel '.$this->baseModel.' did not have a record for id: '.$id);
 
@@ -221,6 +221,24 @@ class LensBuilder extends LensIndex
         if (! empty($relationships[$field])) {
             $relationship = $relationships[$field];
             $type = $relationship['type'];
+
+            // Short-circuit: use the already-loaded relation to avoid an N+1 query.
+            if (method_exists($parentData, 'relationLoaded') && $parentData->relationLoaded($field)) {
+                $loaded = $parentData->getRelation($field);
+                if ($type == 'hasMany') {
+                    foreach (($loaded ?? []) as $record) {
+                        $data[] = $this->mapRecordsToFields($embedFields, $record);
+                    }
+
+                    return $data;
+                }
+                if ($loaded) {
+                    $data = $this->mapRecordsToFields($embedFields, $loaded);
+                }
+
+                return $data;
+            }
+
             $relation = $relationship['relation'];
             $whereRelatedField = $relationship['whereRelatedField'];
             $equalsModelField = $relationship['equalsModelField'];
@@ -288,7 +306,7 @@ class LensBuilder extends LensIndex
     {
         IndexableBuild::deleteState($this->baseModelName, $id, $this->indexModelName);
         $index = $this->indexModelInstance::find($id);
-        $index->delete();
+        $index?->delete();
     }
 
     // ----------------------------------------------------------------------

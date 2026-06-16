@@ -15,14 +15,19 @@ class BulkBuildStateUpdateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private $indexModel, private $baseModel, private $buildStates) {}
+    public int $timeout = 600;
+
+    public function __construct(private string $indexModel, private string $baseModel, private array $buildStates) {}
 
     public function handle(): void
     {
         if (! empty($this->buildStates)) {
-            foreach ($this->buildStates as $modelId => $buildState) {
-                IndexableBuild::writeState(class_basename($this->baseModel), $modelId, class_basename($this->indexModel), $buildState, 'Bulk Index');
-            }
+            IndexableBuild::bulkWriteState(
+                class_basename($this->baseModel),
+                class_basename($this->indexModel),
+                $this->buildStates,
+                'Bulk Index'
+            );
         }
     }
 }
