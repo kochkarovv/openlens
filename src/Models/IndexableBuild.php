@@ -109,7 +109,17 @@ class IndexableBuild extends Model
         $stateModel->last_source = $source;
         $logs = $stateModel->_prepLogs($stateData, $source);
         $stateModel->logs = $logs;
-        $stateModel->withoutRefresh()->save();
+        try {
+            $stateModel->withoutRefresh()->save();
+        } catch (\PDPhilip\OpenSearch\Exceptions\QueryException $e) {
+            // Two concurrent IndexBuildJobs for the same record raced to write
+            // the same indexable_builds document. The winner already persisted a
+            // newer state (higher seqNo); our result is stale — discard silently.
+            if (! (str_contains($e->getMessage(), 'version_conflict') &&
+                   ! str_contains($e->getMessage(), 'no document was found'))) {
+                throw $e;
+            }
+        }
 
         return $stateModel;
     }
