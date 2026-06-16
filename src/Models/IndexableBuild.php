@@ -72,6 +72,80 @@ class IndexableBuild extends Model
         return self::where('model', strtolower($model))->where('model_id', $modelId)->where('index_model', strtolower($indexModel))->first();
     }
 
+    /**
+     * Write state for multiple records in two OS requests: one whereIn fetch + one bulkInsert.
+     */
+    public static function bulkWriteState(string $model, string $indexModel, array $buildStates, string $source): void
+    {
+        if (! self::isEnabled()) {
+            return;
+        }
+
+        $model = strtolower($model);
+        $indexModel = strtolower($indexModel);
+        $modelIds = array_keys($buildStates);
+
+        $existing = self::where('model', $model)
+            ->where('index_model', $indexModel)
+            ->whereIn('model_id', $modelIds)
+            ->get()
+            ->keyBy('model_id');
+
+        $trim = config('elasticlens.index_build_state.log_trim', 2);
+        $documents = [];
+
+        foreach ($buildStates as $modelId => $stateData) {
+            $buildResult = BuildResult::fromArray($stateData);
+            $stateDataArr = $buildResult->toArray();
+            unset($stateDataArr['model']);
+
+            $state = IndexableBuildState::FAILED;
+            if ($buildResult->success) {
+                $state = IndexableBuildState::SUCCESS;
+                unset($stateDataArr['msg'], $stateDataArr['details'], $stateDataArr['map']);
+            } elseif ($buildResult->skipped) {
+                $state = IndexableBuildState::SKIPPED;
+                unset($stateDataArr['msg'], $stateDataArr['details'], $stateDataArr['map']);
+            }
+
+            $existingRecord = $existing->get((string) $modelId);
+
+            $logs = [];
+            if ($trim) {
+                $logs = $existingRecord?->logs ?? [];
+                $logEntry = $stateDataArr;
+                unset($logEntry['id']);
+                $logs[] = [
+                    'ts' => time(),
+                    'success' => $logEntry['success'] ?? false,
+                    'data' => $logEntry,
+                    'source' => $source,
+                ];
+                $logs = collect($logs)->sortByDesc('ts')->take($trim)->values()->all();
+            }
+
+            $doc = [
+                'model' => $model,
+                'model_id' => (string) $modelId,
+                'index_model' => $indexModel,
+                'state' => $state->value,
+                'state_data' => is_array($stateDataArr) ? $stateDataArr : [],
+                'last_source' => $source,
+                'logs' => $logs,
+            ];
+
+            if ($existingRecord) {
+                $doc['_id'] = $existingRecord->id;
+            }
+
+            $documents[] = $doc;
+        }
+
+        if ($documents) {
+            static::bulkInsert($documents);
+        }
+    }
+
     public static function writeState($model, $modelId, $indexModel, BuildResult $buildResult, $observerModel): ?IndexableBuild
     {
         if (! self::isEnabled()) {
