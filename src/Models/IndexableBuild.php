@@ -88,6 +88,7 @@ class IndexableBuild extends Model
         $existing = self::where('model', $model)
             ->where('index_model', $indexModel)
             ->whereIn('model_id', $modelIds)
+            ->limit(count($modelIds))
             ->get()
             ->keyBy('model_id');
 
