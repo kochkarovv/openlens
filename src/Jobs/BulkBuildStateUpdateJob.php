@@ -9,7 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use PDPhilip\ElasticLens\Index\BuildResult;
 use PDPhilip\ElasticLens\Models\IndexableBuild;
 
 class BulkBuildStateUpdateJob implements ShouldQueue
@@ -23,10 +22,12 @@ class BulkBuildStateUpdateJob implements ShouldQueue
     public function handle(): void
     {
         if (! empty($this->buildStates)) {
-            foreach ($this->buildStates as $modelId => $stateData) {
-                $buildResult = BuildResult::fromArray($stateData);
-                IndexableBuild::writeState(class_basename($this->baseModel), $modelId, class_basename($this->indexModel), $buildResult, 'Bulk Index');
-            }
+            IndexableBuild::bulkWriteState(
+                class_basename($this->baseModel),
+                class_basename($this->indexModel),
+                $this->buildStates,
+                'Bulk Index'
+            );
         }
     }
 }
