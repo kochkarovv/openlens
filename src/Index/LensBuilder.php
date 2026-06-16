@@ -306,7 +306,7 @@ class LensBuilder extends LensIndex
     {
         IndexableBuild::deleteState($this->baseModelName, $id, $this->indexModelName);
         $index = $this->indexModelInstance::find($id);
-        $index->delete();
+        $index?->delete();
     }
 
     // ----------------------------------------------------------------------
