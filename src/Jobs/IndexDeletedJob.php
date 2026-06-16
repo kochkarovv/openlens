@@ -29,6 +29,13 @@ class IndexDeletedJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // Stale jobs (e.g. from a cached config with a wrong namespace) may carry
+        // a class name that no longer exists. The base model is already deleted,
+        // so the desired end state is achieved — discard silently.
+        if (! class_exists($this->indexModel)) {
+            return;
+        }
+
         try {
             $builder = new LensBuilder($this->indexModel);
             $builder->processDelete($this->modelId);

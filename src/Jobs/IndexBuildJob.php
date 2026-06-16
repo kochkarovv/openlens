@@ -27,6 +27,10 @@ class IndexBuildJob implements ShouldQueue
      */
     public function handle(): void
     {
+        if (! class_exists($this->indexModelClass)) {
+            return;
+        }
+
         $this->indexModelClass::indexBuild($this->modelId, 'Observed: '.$this->observedModel);
     }
 }
