@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace PDPhilip\ElasticLens\Observers;
 
 use Exception;
+use OpenSearch\Common\Exceptions\OpenSearchException;
 use PDPhilip\ElasticLens\Lens;
 use PDPhilip\ElasticLens\Watchers\EmbeddedModelTrigger;
-use Throwable;
+use PDPhilip\OpenSearch\Exceptions\LaravelOpenSearchException;
+use PDPhilip\OpenSearch\Exceptions\QueryException;
 
 class ObserverRegistry
 {
@@ -71,17 +73,26 @@ class ObserverRegistry
     }
 
     /**
-     * Index maintenance runs inside the write that triggered it, so a failure
-     * here must never propagate: an unreachable search cluster would otherwise
-     * fail every save and delete of a watched model. The failure is reported so
-     * it stays visible, and the index is rebuilt by the next build or sync.
+     * Index maintenance runs inside the write that triggered it, so an
+     * unreachable search cluster must not fail every save and delete of a
+     * watched model. Those failures are reported and swallowed: the queued
+     * build is the retry, and a rebuild or sync reconciles the index.
+     *
+     * Only search-layer failures are absorbed. Database and queue-dispatch
+     * errors still propagate, because nothing would retry them - swallowing
+     * one would commit the write, drop the reindex on the floor and leave the
+     * index silently stale with no record of what was lost.
+     *
+     * QueryException is listed separately: unlike the driver's other
+     * exceptions it extends Exception directly rather than
+     * LaravelOpenSearchException.
      */
     private static function trigger($model, $baseModel, $settings, string $event): void
     {
         try {
             $watcher = new EmbeddedModelTrigger($model, $baseModel, $settings);
             $watcher->handle($event);
-        } catch (Throwable $e) {
+        } catch (OpenSearchException|LaravelOpenSearchException|QueryException $e) {
             report($e);
         }
     }
