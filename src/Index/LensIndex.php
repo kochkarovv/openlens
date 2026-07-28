@@ -19,6 +19,8 @@ abstract class LensIndex
 
     public bool $indexExists = false;
 
+    protected bool $indexExistsResolved = false;
+
     public mixed $baseModel = null;
 
     public bool $baseModelDefined = false;
@@ -60,7 +62,6 @@ abstract class LensIndex
         $migrationSettings = $instance->getMigrationSettings();
         $this->indexModelName = $instance::getModelIdentifier();
         $this->indexModelTable = $instance->getTable();
-        $this->indexExists = $instance::indexExists();
         $this->fieldMap = $instance->getFieldSet();
         $this->observers = $instance->getObserverSet();
         $this->relationships = $instance->getRelationships();
@@ -82,6 +83,24 @@ abstract class LensIndex
             }
         }
 
+    }
+
+    /**
+     * Whether the index exists on the cluster.
+     *
+     * This hits the search cluster over HTTP, so it is resolved on demand
+     * rather than on construction: builders are constructed from model
+     * observers on the write path, where a cluster outage would otherwise
+     * turn every save of an indexed model into a failed request.
+     */
+    public function checkIndexExists(): bool
+    {
+        if (! $this->indexExistsResolved) {
+            $this->indexExists = $this->indexModel::indexExists();
+            $this->indexExistsResolved = true;
+        }
+
+        return $this->indexExists;
     }
 
     public function fetchCurrentMigrationVersion(): string

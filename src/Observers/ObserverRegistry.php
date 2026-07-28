@@ -7,6 +7,7 @@ namespace PDPhilip\ElasticLens\Observers;
 use Exception;
 use PDPhilip\ElasticLens\Lens;
 use PDPhilip\ElasticLens\Watchers\EmbeddedModelTrigger;
+use Throwable;
 
 class ObserverRegistry
 {
@@ -62,12 +63,26 @@ class ObserverRegistry
     private static function watchEmbedded($watchedModel, $settings, $baseModel): void
     {
         $watchedModel::saved(function ($model) use ($settings, $baseModel) {
-            $watcher = new EmbeddedModelTrigger($model, $baseModel, $settings);
-            $watcher->handle('saved');
+            self::trigger($model, $baseModel, $settings, 'saved');
         });
         $watchedModel::deleted(function ($model) use ($settings, $baseModel) {
-            $watcher = new EmbeddedModelTrigger($model, $baseModel, $settings);
-            $watcher->handle('deleted');
+            self::trigger($model, $baseModel, $settings, 'deleted');
         });
+    }
+
+    /**
+     * Index maintenance runs inside the write that triggered it, so a failure
+     * here must never propagate: an unreachable search cluster would otherwise
+     * fail every save and delete of a watched model. The failure is reported so
+     * it stays visible, and the index is rebuilt by the next build or sync.
+     */
+    private static function trigger($model, $baseModel, $settings, string $event): void
+    {
+        try {
+            $watcher = new EmbeddedModelTrigger($model, $baseModel, $settings);
+            $watcher->handle($event);
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 }
