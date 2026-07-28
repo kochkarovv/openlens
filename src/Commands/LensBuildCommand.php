@@ -101,7 +101,7 @@ class LensBuildCommand extends Command
         $this->newLine();
         $health = new LensState($this->indexModel);
         $this->baseModel = $health->baseModel;
-        if (! $health->indexExists) {
+        if (! $health->checkIndexExists()) {
             $this->omni->statusError('ERROR', $health->indexModelTable.' index not found');
 
             $this->migrate = null;
@@ -109,7 +109,7 @@ class LensBuildCommand extends Command
         }
         $health = new LensState($this->indexModel);
 
-        if (! $health->indexExists) {
+        if (! $health->checkIndexExists()) {
             $this->omni->statusError('ERROR', 'Index required', [
                 'Migrate to create the "'.$health->indexModelTable.'" index',
             ]);

@@ -27,6 +27,19 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+            'foreign_key_constraints' => false,
+        ]);
+
+        // Index models resolve this connection on construction. Tests never reach
+        // the wire, so it deliberately points at a host that isn't there.
+        config()->set('database.connections.opensearch', [
+            'driver' => 'opensearch',
+            'hosts' => ['http://localhost:9200'],
+        ]);
 
         /*
         $migration = include __DIR__.'/../database/migrations/create_omnilens_table.php.stub';
